@@ -54,11 +54,11 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # build Random Forest model
 rf_model = RandomForestClassifier(
-    n_estimators=150,
-    max_depth=20,
-    min_samples_split=10,
-    min_samples_leaf=3,
-    class_weight="balanced",
+    n_estimators=100,
+    max_depth=25,
+    # min_samples_split=3,
+    # min_samples_leaf=2,
+    # class_weight="balanced",
     random_state=RANDOM_SEED,
 )
 rf_model.fit(X_train, y_train)
@@ -92,7 +92,5 @@ def evaluation(y_true, y_pred, model_name="Model"):
 y_proba = rf_model.predict_proba(X_test)[:, 1]
 
 # 嘗試不同 threshold
-for threshold in [0.3, 0.4, 0.5, 0.6, 0.7]:
-    print(f"\nThreshold: {threshold}")
-    y_pred_thresh = (y_proba > threshold).astype(int)
-    print(classification_report(y_test, y_pred_thresh))
+y_pred_thresh = (y_proba > 0.485).astype(int)
+print(classification_report(y_test, y_pred_thresh))
