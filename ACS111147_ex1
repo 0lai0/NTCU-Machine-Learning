@@ -1,0 +1,259 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/JasonYen-tw/NTCU-Machine-Learning/blob/main/ACS111147_ex1\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "yGqtp5ln2Zru"
+      },
+      "outputs": [],
+      "source": [
+        "# 載入必要套件\n",
+        "import numpy as np\n",
+        "import pandas as pd\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.preprocessing import StandardScaler\n",
+        "from sklearn.ensemble import RandomForestClassifier , IsolationForest\n",
+        "from sklearn.cluster import KMeans\n",
+        "from sklearn.metrics import (\n",
+        "    silhouette_score,\n",
+        "    accuracy_score,\n",
+        "    precision_score,\n",
+        "    recall_score,\n",
+        "    f1_score,\n",
+        "    classification_report\n",
+        ")\n",
+        "import kagglehub  # 用於下載 Kaggle 資料集\n",
+        "\n",
+        "# 一般設定\n",
+        "RANDOM_SEED = 42\n",
+        "TEST_SIZE = 0.3"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "CzXFFeTW2ewD",
+        "outputId": "a8ce50b4-8f42-4368-eafd-562a2fc928e7"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Fraudulent: 492, non-fraudulent: 284315\n",
+            "Positive class percentage: 0.173%\n"
+          ]
+        }
+      ],
+      "source": [
+        "# 讀取資料集並前處理\n",
+        "path = kagglehub.dataset_download(\"mlg-ulb/creditcardfraud\")\n",
+        "data = pd.read_csv(f\"{path}/creditcard.csv\")\n",
+        "data['Class'] = data['Class'].astype(int)\n",
+        "\n",
+        "# 移除 Time 欄位、標準化 Amount\n",
+        "data = data.drop(['Time'], axis=1)\n",
+        "data['Amount'] = StandardScaler().fit_transform(\n",
+        "    data['Amount'].values.reshape(-1, 1)\n",
+        ")\n",
+        "\n",
+        "# 切分詐欺與非詐欺交易\n",
+        "fraud = data[data['Class'] == 1]\n",
+        "nonfraud = data[data['Class'] == 0]\n",
+        "print(f'Fraudulent: {len(fraud)}, non-fraudulent: {len(nonfraud)}')\n",
+        "print(f'Positive class percentage: {len(fraud)/(len(fraud)+len(nonfraud))*100:.3f}%')\n",
+        "\n",
+        "# 定義通用評估函式\n",
+        "def evaluation(y_true, y_pred, model_name=\"Model\"):\n",
+        "    accuracy = accuracy_score(y_true, y_pred)\n",
+        "    precision = precision_score(y_true, y_pred, zero_division=0)\n",
+        "    recall = recall_score(y_true, y_pred)\n",
+        "    f1 = f1_score(y_true, y_pred)\n",
+        "    print(f'\\n{model_name} Evaluation:')\n",
+        "    print('===' * 15)\n",
+        "    print('         Accuracy:', accuracy)\n",
+        "    print('  Precision Score:', precision)\n",
+        "    print('     Recall Score:', recall)\n",
+        "    print('         F1 Score:', f1)\n",
+        "    print(\"\\nClassification Report:\")\n",
+        "    print(classification_report(y_true, y_pred))"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 選擇高規律性特徵\n",
+        "selected_features = ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V9', 'V10', 'V11', 'V12', 'V14', 'V16', 'V17', 'V18', 'V19', 'Amount']\n",
+        "X = np.asarray(data[selected_features])\n",
+        "y = np.asarray(data['Class'])\n",
+        "\n",
+        "# 下採樣\n",
+        "nonfraud_sample = nonfraud.sample(n=5000, random_state=RANDOM_SEED)\n",
+        "data_balanced = pd.concat([fraud, nonfraud_sample])\n",
+        "X_balanced = np.asarray(data_balanced[selected_features])\n",
+        "y_balanced = np.asarray(data_balanced['Class'])\n",
+        "\n",
+        "# 切分訓練與測試集\n",
+        "X_train, X_test, y_train, y_test = train_test_split(\n",
+        "    X_balanced, y_balanced, test_size=TEST_SIZE, random_state=RANDOM_SEED\n",
+        ")\n",
+        "\n",
+        "# XGBoost\n",
+        "from xgboost import XGBClassifier\n",
+        "scale_pos_weight = len(nonfraud) / len(fraud)\n",
+        "xgb_model = XGBClassifier(\n",
+        "    n_estimators=100,\n",
+        "    scale_pos_weight=scale_pos_weight,\n",
+        "    max_depth=6,\n",
+        "    learning_rate=0.1,\n",
+        "    random_state=RANDOM_SEED,\n",
+        "    eval_metric='logloss'\n",
+        ")\n",
+        "xgb_model.fit(X_train, y_train)\n",
+        "y_pred_xgb = xgb_model.predict(X_test)\n",
+        "evaluation(y_test, y_pred_xgb, model_name=\"XGBoost with Selected Features\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "tXve2UNBz6a6",
+        "outputId": "3790c971-c7bf-4894-fb07-b8ac4d7c7254"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "XGBoost with Selected Features Evaluation:\n",
+            "=============================================\n",
+            "         Accuracy: 0.9824029126213593\n",
+            "  Precision Score: 0.9298245614035088\n",
+            "     Recall Score: 0.9034090909090909\n",
+            "         F1 Score: 0.9164265129682997\n",
+            "\n",
+            "Classification Report:\n",
+            "              precision    recall  f1-score   support\n",
+            "\n",
+            "           0       0.99      0.99      0.99      1472\n",
+            "           1       0.93      0.90      0.92       176\n",
+            "\n",
+            "    accuracy                           0.98      1648\n",
+            "   macro avg       0.96      0.95      0.95      1648\n",
+            "weighted avg       0.98      0.98      0.98      1648\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "selected_features = ['V1','V2','V3','V4','V5','V6','V7',\n",
+        "                     'V9','V10','V11','V12','V14','V16','V17','V18','V19','Amount']\n",
+        "X  = data[selected_features].to_numpy()\n",
+        "y  = data['Class'].to_numpy()\n",
+        "\n",
+        "nonfraud_sample = nonfraud.sample(n=5000, random_state=RANDOM_SEED)\n",
+        "data_balanced   = pd.concat([fraud, nonfraud_sample])\n",
+        "\n",
+        "X_bal = data_balanced[selected_features].to_numpy()\n",
+        "y_bal = data_balanced['Class'].to_numpy()\n",
+        "\n",
+        "# -----------------------------------------\n",
+        "# 2. 切分 train / test\n",
+        "# -----------------------------------------\n",
+        "X_train, X_test, y_train, y_test = train_test_split(\n",
+        "    X_bal, y_bal, test_size=TEST_SIZE, random_state=RANDOM_SEED, stratify=y_bal)\n",
+        "\n",
+        "# -----------------------------------------\n",
+        "# 3. Isolation Forest → 產生 anomaly score\n",
+        "# -----------------------------------------\n",
+        "iso = IsolationForest(\n",
+        "        n_estimators=300,\n",
+        "        max_samples='auto',\n",
+        "        contamination='auto',\n",
+        "        bootstrap=True,\n",
+        "        random_state=RANDOM_SEED\n",
+        "     )\n",
+        "iso.fit(X_train[y_train == 0])\n",
+        "\n",
+        "# decision_function：分數越低越異常\n",
+        "iso_train = (-iso.decision_function(X_train)).reshape(-1, 1)  # 反向 → 分數大 = 高風險\n",
+        "iso_test  = (-iso.decision_function(X_test )).reshape(-1, 1)\n",
+        "score_test = iso_test.ravel()            # 就用剛算好的分數\n",
+        "th         = np.percentile(score_test, 96)   # 95–98 掃一下\n",
+        "y_pred     = (score_test > th).astype(int)\n",
+        "\n",
+        "evaluation(y_test, y_pred, model_name=\"Isolation Forest (Unsupervised)\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "E_Uo_EHiWt2H",
+        "outputId": "72dc2374-396c-480e-cb72-9772bca1cdee"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Isolation Forest (Unsupervised) Evaluation:\n",
+            "=============================================\n",
+            "         Accuracy: 0.9466019417475728\n",
+            "  Precision Score: 0.9545454545454546\n",
+            "     Recall Score: 0.42567567567567566\n",
+            "         F1 Score: 0.5887850467289719\n",
+            "\n",
+            "Classification Report:\n",
+            "              precision    recall  f1-score   support\n",
+            "\n",
+            "           0       0.95      1.00      0.97      1500\n",
+            "           1       0.95      0.43      0.59       148\n",
+            "\n",
+            "    accuracy                           0.95      1648\n",
+            "   macro avg       0.95      0.71      0.78      1648\n",
+            "weighted avg       0.95      0.95      0.94      1648\n",
+            "\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyOVpYebhEQK3dF08inF36Sz",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
