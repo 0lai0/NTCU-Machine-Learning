@@ -1,7 +1,7 @@
 # 信用卡詐騙偵測 - 使用 Random Forest
-### 實驗結果
+## 實驗結果
 ![image](../image/random_forest_result.png)
-### 簡介
+## 簡介
 利用機器學習技術，對信用卡交易進行分類，辨識出可能的詐騙交易。使用公開資料集 Credit Card Fraud Detection，並透過 RandomForestClassifier 來建立模型，進行分類任務。
 
 該資料集極度不平衡，Fraudulent:492, non-fraudulent:284315
@@ -9,7 +9,7 @@ the positive class (frauds) percentage: 492/284807 (0.173%)
 
 class 0/1, 0 = 非詐欺資料; 1 =詐欺資料;
 
-### 使用環境
+## 使用環境
 Anaconda (conda)
 conda venv 自定義虛擬環境
 python 版本 3.10.15
@@ -18,7 +18,7 @@ python 版本 3.10.15
 conda create -n venv python=3.10.15
 conda activate venv
 ```
-### 使用套件
+## 使用套件
 ```bash
 numpy
 pandas
@@ -27,7 +27,7 @@ imbalanced-learn #預留給SMOTE用，因資料是極不平衡資料，但使用
 kagglehub
 ```
 
-### Random Forest 模型與參數說明
+## Random Forest 模型與參數說明
 Random Forest 的核心概念是：結合多棵使用 GINI 指標的 CART 決策樹，並透過隨機抽樣訓練資料，來提升整體模型的預測效能。顧名思義，它是一個由眾多決策樹組成的集成學習模型，透過整合多個「弱分類器」，達到更穩定、更準確的分類效果。
 
 **Random Forest = Bagging + Decision Tree**
@@ -50,13 +50,13 @@ RandomForestClassifier(
 )
 ```
 
-### 模型在測試集上的分類表現如下：
+## 模型在測試集上的分類表現如下：
 ![rf_result](../image/image.png)
 
-### 參考資料
+## 參考資料
 - [ML入門(十七)：隨機森林 Random Forest](https://medium.com/chung-yi/ml%E5%85%A5%E9%96%80-%E5%8D%81%E4%B8%83-%E9%9A%A8%E6%A9%9F%E6%A3%AE%E6%9E%97-random-forest-6afc24871857)，作者：鍾毅，發布於 Medium
 - CSDN 用戶 weixin_45281949（2019）。[隨機森林 Random Forest 詳解](https://blog.csdn.net/weixin_45281949/article/details/102767177)，CSDN 部落格。
 - CSDN 用戶 qq_16633405（2017）。[機器學習算法之隨機森林（Random Forest）原理詳解](https://blog.csdn.net/qq_16633405/article/details/61200502)，CSDN。
 
-### 資料集
+## 資料集
 - ULB Machine Learning Group（2016）。[Credit Card Fraud Detection Dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud/data)，Kaggle。
