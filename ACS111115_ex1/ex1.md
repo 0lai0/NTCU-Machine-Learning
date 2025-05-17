@@ -52,3 +52,11 @@ RandomForestClassifier(
 
 ### 模型在測試集上的分類表現如下：
 ![rf_result](../image/image.png)
+
+### 參考資料
+- [ML入門(十七)：隨機森林 Random Forest](https://medium.com/chung-yi/ml%E5%85%A5%E9%96%80-%E5%8D%81%E4%B8%83-%E9%9A%A8%E6%A9%9F%E6%A3%AE%E6%9E%97-random-forest-6afc24871857)，作者：鍾毅，發布於 Medium
+- CSDN 用戶 weixin_45281949（2019）。[隨機森林 Random Forest 詳解](https://blog.csdn.net/weixin_45281949/article/details/102767177)，CSDN 部落格。
+- CSDN 用戶 qq_16633405（2017）。[機器學習算法之隨機森林（Random Forest）原理詳解](https://blog.csdn.net/qq_16633405/article/details/61200502)，CSDN。
+
+### 資料集
+- ULB Machine Learning Group（2016）。[Credit Card Fraud Detection Dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud/data)，Kaggle。
