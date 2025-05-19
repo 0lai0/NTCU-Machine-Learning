@@ -33,6 +33,7 @@ XGBoost （Extreme Gradient Boosting）是一種執行效率高、預測效能�
 **XGBoost = Boosting + CART Decision Tree**
 
 Boosting: 把多個弱模型（weak learners）串聯起來，每一個新模型用來修正前一個模型犯的錯誤，最後形成一個強模型。
+
 CART Tree：二元分裂、適用於分類與回歸，使用 Gini impurity或 MSE等指標來進行節點分裂選擇。
 
 **使用參數**
