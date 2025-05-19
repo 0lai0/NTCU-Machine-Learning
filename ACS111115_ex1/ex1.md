@@ -27,10 +27,13 @@ xgboost
 kagglehub
 ```
 
-## Random Forest 模型與參數說明
-XGBoost （Extreme Gradient Boosting）是一種執行效率高、預測效能優秀的採用推進式模型。它是一種從基本模型抽取創造出強模型的群組方法，特別適合解決資料不平衡與高線性問題。
+## XGBoost 模型與參數說明
+XGBoost （Extreme Gradient Boosting）是一種執行效率高、預測效能優秀的採用推進式模型。它是一種從基本模型抽取創造出強模型的群組方法，特別適合解決資料不平衡與高線性問題，在每一輪中，XGBoost 會根據 前一輪的預測誤差（即 loss 的負梯度），學習一棵新的決策樹來預測這些誤差，每棵新生成的樹，會針對錯誤調整預測，嘗試糾正之前模型未能擬合的部分(具有前後依賴性)。
 
 **XGBoost = Boosting + CART Decision Tree**
+
+Boosting: 把多個弱模型（weak learners）串聯起來，每一個新模型用來修正前一個模型犯的錯誤，最後形成一個強模型。
+CART Tree：二元分裂、適用於分類與回歸，使用 Gini impurity或 MSE等指標來進行節點分裂選擇。
 
 **使用參數**
 ```bash
