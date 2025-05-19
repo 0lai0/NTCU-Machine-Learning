@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import StandardScaler
@@ -92,5 +91,6 @@ def evaluation(y_true, y_pred, model_name="Model"):
 y_proba = rf_model.predict_proba(X_test)[:, 1]
 
 # 嘗試不同 threshold
-y_pred_thresh = (y_proba > 0.485).astype(int)
-print(classification_report(y_test, y_pred_thresh))
+for threshold in [0.45, 0.485, 0.5]:
+    y_pred_thresh = (y_proba > threshold).astype(int)
+    print(classification_report(y_test, y_pred_thresh))
