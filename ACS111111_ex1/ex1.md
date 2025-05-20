@@ -515,7 +515,82 @@ Classification Report:
    macro avg       0.74      0.80      0.76     85443
 weighted avg       1.00      1.00      1.00     85443
 ```
+#### 實驗4
 
+```
+input_dim = X_train.shape[1]
+encoding_dim = 18
+hidden_dim = int(encoding_dim / 2)
+
+autoencoder.fit(
+    X_train_auto, X_train_auto,
+    epochs=40,
+    batch_size=64,
+    shuffle=True,
+    validation_split=0.1,
+    verbose=1
+)
+
+threshold = np.percentile(mse, 99.8)
+```
+
+```
+AutoEncoder Evaluation:
+=============================================
+         Accuracy: 0.9983731844621561
+  Precision Score: 0.49122807017543857
+     Recall Score: 0.6176470588235294
+         F1 Score: 0.5472312703583062
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85307
+           1       0.49      0.62      0.55       136
+
+    accuracy                           1.00     85443
+   macro avg       0.75      0.81      0.77     85443
+weighted avg       1.00      1.00      1.00     85443
+```
+#### 實驗5
+
+(我把神經網路拆了: 3->5層)
+
+```
+# Encoder
+encoder = Dense(29, activation="tanh", activity_regularizer=regularizers.l1(1e-5))(
+    input_layer
+)
+encoder = Dense(17, activation="tanh")(encoder)
+encoder = Dense(8, activation="relu")(encoder)
+
+# Decoder
+decoder = Dense(17, activation="relu")(encoder)
+decoder = Dense(29, activation="tanh")(decoder)
+decoder = Dense(input_dim, activation="linear")(decoder)
+
+threshold = np.percentile(mse, 99.8)
+
+```
+
+```
+AutoEncoder Evaluation:
+=============================================
+         Accuracy: 0.9987477031471274
+  Precision Score: 0.6124031007751938
+     Recall Score: 0.5808823529411765
+         F1 Score: 0.5962264150943396
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85307
+           1       0.61      0.58      0.60       136
+
+    accuracy                           1.00     85443
+   macro avg       0.81      0.79      0.80     85443
+weighted avg       1.00      1.00      1.00     85443
+```
 
 ## 參考資料
 [Random forest 介紹](https://ithelp.ithome.com.tw/articles/10272586)
@@ -526,6 +601,8 @@ weighted avg       1.00      1.00      1.00     85443
 [XGBoost 參數調整參考](https://www.itread01.com/articles/1476146171.html)
 
 [Introduction to Boosted Trees](https://xgboost.readthedocs.io/en/latest/tutorials/model.html)
+
+[AE 介紹](https://medium.com/ml-note/autoencoder-%E4%B8%80-%E8%AA%8D%E8%AD%98%E8%88%87%E7%90%86%E8%A7%A3-725854ab25e8)
 
 ## 筆記區
 
@@ -539,5 +616,7 @@ weighted avg       1.00      1.00      1.00     85443
 
 關於PCA:  
 它轉折的地方在15~25那個區間，測試過後發現17的效果最好
-
 ![PCA](image-1.png)
+
+AutoEncoder架構圖(參考一下)
+![AE](image-3.png)
