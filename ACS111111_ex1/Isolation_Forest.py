@@ -1,11 +1,12 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from xgboost import XGBClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import classification_report
-from sklearn.metrics import f1_score
+from sklearn.ensemble import IsolationForest
+from sklearn.metrics import classification_report, precision_score, recall_score
+from sklearn.metrics import f1_score, accuracy_score
+from sklearn.decomposition import PCA
+import numpy as np
 import kagglehub
 
 # general setting. do not change TEST_SIZE
@@ -44,37 +45,37 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, Y, test_size=TEST_SIZE, random_state=RANDOM_SEED
 )
 
+pca = PCA(n_components=17, random_state=RANDOM_SEED)
+X_train_pca = pca.fit_transform(X_train)
+X_test_pca = pca.transform(X_test)
+
 ########################## train model ################################
 
-xgb_model = XGBClassifier(
-    n_estimators=50,
-    max_depth=8,
-    scale_pos_weight=len(nonfraud) * 2 / len(fraud),  # 不平衡補償
-    eval_metric="logloss",
-    random_state=RANDOM_SEED,
-)
 
-xgb_model.fit(
-    X_train,
-    y_train,
-)
+def evaluation(y_true, y_pred, model_name="Model"):
+    accuracy = accuracy_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred, zero_division=0)
+    recall = recall_score(y_true, y_pred)
+    f1 = f1_score(y_true, y_pred)
 
-scores = cross_val_score(xgb_model, X_train, y_train, cv=5, scoring="f1")
-print("CV F1 scores:", scores)
-print("Average F1:", scores.mean())
+    print(f"\n{model_name} Evaluation:")
+    print("===" * 15)
+    print("         Accuracy:", accuracy)
+    print("  Precision Score:", precision)
+    print("     Recall Score:", recall)
+    print("         F1 Score:", f1)
+    print("\nClassification Report:")
+    print(classification_report(y_true, y_pred))
 
-y_proba = xgb_model.predict_proba(X_test)[:, 1]
 
-# 嘗試不同 threshold
-for threshold in [0.5, 0.55, 0.6, 0.65, 0.7]:
-    y_pred_thresh = (y_proba > threshold).astype(int)
-    print(classification_report(y_test, y_pred_thresh))
-
-y_train_pred = xgb_model.predict(X_train)
-y_test_pred = xgb_model.predict(X_test)
-
-f1_train = f1_score(y_train, y_train_pred)
-f1_test = f1_score(y_test, y_test_pred)
-
-print("Train F1:", f1_train)
-print("Test  F1:", f1_test)
+for c in [0.0013,0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019]:
+    iso_model = IsolationForest(
+        n_estimators=62,
+        contamination=c,
+        max_samples=1.0,
+        random_state=RANDOM_SEED,
+        verbose=0,
+    )
+    iso_model.fit(X_train_pca)
+    preds = (iso_model.predict(X_test_pca) == -1).astype(int)
+    evaluation(y_test, preds, model_name=f"IsolationForest (contamination={c:.4f})")
