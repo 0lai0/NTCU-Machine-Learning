@@ -2,9 +2,13 @@
 
 ## 截圖
 
-![img](image.png)
+**監督**
+![XGB](image.png)
 
-## 實作 (監督)
+**非監督**
+![AE](image-2.png)
+
+## 實作紀錄 (監督)
 
 ### Random forest
 
@@ -157,7 +161,7 @@ Train F1: 0.9985974754558204
 Test  F1: 0.8796992481203008
 ```
 
-## 實作(非監督)
+## 實作紀錄 (非監督)
 
 ### Isolation Forest
 
@@ -395,6 +399,124 @@ Classification Report:
    macro avg       0.75      0.70      0.72     85443
 weighted avg       1.00      1.00      1.00     85443
 ```
+### AutoEncoder
+
+#### 實驗1
+
+```
+input_dim = X_train.shape[1]
+encoding_dim = 14  # 壓縮
+hidden_dim = int(encoding_dim / 2)
+
+autoencoder.fit(
+    X_train_auto, X_train_auto,
+    epochs=20,  # 可調
+    batch_size=64,
+    shuffle=True,
+    validation_split=0.1,
+    verbose=1
+)
+
+threshold = np.percentile(mse, 98.5)
+```
+
+```
+AutoEncoder Evaluation:
+=============================================
+         Accuracy: 0.9860959938204417
+  Precision Score: 0.08970358814352575
+     Recall Score: 0.8455882352941176
+         F1 Score: 0.1622002820874471
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      0.99      0.99     85307
+           1       0.09      0.85      0.16       136
+
+    accuracy                           0.99     85443
+   macro avg       0.54      0.92      0.58     85443
+weighted avg       1.00      0.99      0.99     85443
+```
+
+---
+#### 實驗2
+
+```
+input_dim = X_train.shape[1]
+encoding_dim = 17 
+hidden_dim = int(encoding_dim / 2)
+
+autoencoder.fit(
+    X_train_auto, X_train_auto,
+    epochs=20,
+    batch_size=64,
+    shuffle=True,
+    validation_split=0.1,
+    verbose=1
+)
+
+threshold = np.percentile(mse, 99.5)
+```
+
+```
+AutoEncoder Evaluation:
+=============================================
+         Accuracy: 0.9959973315543695
+  Precision Score: 0.25934579439252337
+     Recall Score: 0.8161764705882353
+         F1 Score: 0.39361702127659576
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85307
+           1       0.26      0.82      0.39       136
+
+    accuracy                           1.00     85443
+   macro avg       0.63      0.91      0.70     85443
+weighted avg       1.00      1.00      1.00     85443
+```
+---
+#### 實驗3
+
+```
+input_dim = X_train.shape[1]
+encoding_dim = 17 
+hidden_dim = int(encoding_dim / 2)
+
+autoencoder.fit(
+    X_train_auto, X_train_auto,
+    epochs=40,
+    batch_size=64,
+    shuffle=True,
+    validation_split=0.1,
+    verbose=1
+)
+
+threshold = np.percentile(mse, 99.8)
+```
+
+```
+AutoEncoder Evaluation:
+=============================================
+         Accuracy: 0.9983029622087239
+  Precision Score: 0.47368421052631576
+     Recall Score: 0.5955882352941176
+         F1 Score: 0.5276872964169381
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85307
+           1       0.47      0.60      0.53       136
+
+    accuracy                           1.00     85443
+   macro avg       0.74      0.80      0.76     85443
+weighted avg       1.00      1.00      1.00     85443
+```
+
+
 ## 參考資料
 [Random forest 介紹](https://ithelp.ithome.com.tw/articles/10272586)
 (被我放棄了)
