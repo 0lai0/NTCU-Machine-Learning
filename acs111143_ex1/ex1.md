@@ -25,7 +25,7 @@ xgb_model = XGBClassifier(
     random_state=42             # 固定隨機種子以利重現結果
 )
 ```
-### 3. **3. 設定預測機率閾值Threshold **
+### 3. **設定預測機率閾值Threshold**
 
 用下來結果預設的0.5是最好的
 ```python
