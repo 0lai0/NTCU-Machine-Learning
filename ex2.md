@@ -81,4 +81,4 @@ final_pred = (y_prob >= best_th).astype(int)
 
 threshold: 0.61
 
-![image](https://raw.githubusercontent.com/SenCha930511/NTCU-Machine-Learning/refs/heads/main/images/hybrid_result.png)
+![image](https://raw.githubusercontent.com/SenCha930511/NTCU-Machine-Learning/refs/heads/assignment-acs111132/images/hybrid_result.png)

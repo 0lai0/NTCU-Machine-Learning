@@ -53,8 +53,7 @@ evaluation(y_test, y_pred, "ex1")
 
 ### 1-3. 結果
 
-![image](https://raw.githubusercontent.com/SenCha930511/NTCU-Machine-Learning/refs/heads/main/images/supervise_result.png)
-
+![image](https://raw.githubusercontent.com/SenCha930511/NTCU-Machine-Learning/refs/heads/assignment-acs111132/images/supervise_result.png)
 
 | 參數             | 數值 |
 | ---------------- | ---- |
@@ -116,5 +115,5 @@ kmeans.fit(mix_x_train)     # 用混合樣本訓練模型
 
 k 設定值：2
 
-![image](https://raw.githubusercontent.com/SenCha930511/NTCU-Machine-Learning/refs/heads/main/images/unsupervise_result.png)
+![image](https://raw.githubusercontent.com/SenCha930511/NTCU-Machine-Learning/refs/heads/assignment-acs111132/images/unsupervise_result.png)
 
