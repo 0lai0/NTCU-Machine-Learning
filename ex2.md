@@ -80,4 +80,4 @@ final_pred = (y_prob >= best_th).astype(int)
 ### 1-3. 結果
 
 threshold: 0.61
-![image](https://hackmd.io/_uploads/rJNTwa3-xl.png)
+![image](https://raw.githubusercontent.com/SenCha930511/NTCU-Machine-Learning/refs/heads/main/images/hybrid_result.png)
