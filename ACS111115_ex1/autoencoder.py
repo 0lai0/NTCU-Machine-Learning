@@ -21,6 +21,11 @@ scaler = StandardScaler()
 data['Amount'] = scaler.fit_transform(data['Amount'].values.reshape(-1, 1))
 X = data.drop(columns=['Class']).values
 Y = data['Class'].values
+fraud = data[data['Class'] == 1]
+nonfraud = data[data['Class'] == 0]
+print(f'Fraudulent:{len(fraud)}, non-fraudulent:{len(nonfraud)}')
+print(f'the positive class (frauds) percentage: {len(fraud)/(len(fraud)+len(nonfraud))*100:.3f}%')
+
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, stratify=Y, random_state=42)
 X_train_auto = X_train[y_train == 0]
 
@@ -69,7 +74,7 @@ EPOCHS = 100
 BATCH_SIZE = 64
 train_losses, val_losses = [], []
 
-# 🔁 訓練迴圈
+# 訓練迴圈
 for epoch in range(EPOCHS):
     model.train()
     perm = torch.randperm(train_tensor.size(0))
@@ -92,11 +97,10 @@ for epoch in range(EPOCHS):
         val_loss = criterion(val_output, val_tensor).item()
 
     # 記錄
-    avg_train_loss = epoch_train_loss / (len(perm) // BATCH_SIZE)
     train_losses.append(epoch_train_loss)
     val_losses.append(val_loss)
 
-    # ✅ 顯示進度
+    # 顯示進度
     print(f"Epoch {epoch+1}/{EPOCHS} - Train Loss: {epoch_train_loss:.4f} | Val Loss: {val_loss:.4f}")
 with torch.no_grad():
     X_test_pred = model(X_test_tensor).numpy()
@@ -125,7 +129,7 @@ best_threshold = thresholds[best_idx]
 print(f"\nBest F1 Threshold: {best_threshold:.6f}")
 print(f"Precision: {precision[best_idx]:.4f}, Recall: {recall[best_idx]:.4f}, F1: {f1_scores[best_idx]:.4f}")
 
-# 📊 分類結果
+# 分類結果
 y_pred = (mse > best_threshold).astype(int)
 print(best_threshold)
 
