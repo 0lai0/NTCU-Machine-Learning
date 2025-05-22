@@ -15,22 +15,22 @@
 參數設計理由：
 
 ```python
-xgb_model = XGBClassifier(
-    n_estimators=500,        # 越多模型越穩定但計算成本提高
-    max_depth=7,             # 避免過擬合
-    learning_rate=0.05,      # 學習率，控制每棵樹對最終預測的貢獻程度
-    subsample=0.8,           #（防止過擬合）
-    colsample_bytree=1.0,    # 每棵樹使用的特徵比例
-    scale_pos_weight=5,      # 正負樣本不平衡時使用，放大正類（詐欺）權重
-    gamma=0.05,              # 節點分裂的最小損失減少，避免過度分裂
-    use_label_encoder=False, 
-    bootstrap=True,          # 啟用自助採樣（類似隨機森林）
-    eval_metric='logloss',  
-    random_state=RANDOM_SEED 
+xgb = XGBClassifier(
+    n_estimators=250,           # 樹的數量較多，增強模型表現
+    max_depth=6,                # 深度 適中，避免過度擬合
+    learning_rate=0.08,         # 低學習率，更穩健收斂
+    subsample=0.8,              # 80%樣本比例訓練，增加多樣性
+    colsample_bytree=1.0,       
+    scale_pos_weight=15,       # 約為非詐欺與詐欺比率，解決類別不平衡
+    gamma=0.05,                  # 控制樹的複雜度，防止過擬合
+    use_label_encoder=False,
+    eval_metric='logloss',
+    random_state=RANDOM_SEED
 )
 ```
-調整 scale_pos_weight 為 10 時，Precision（精確率）大幅降低，可能是模型過度傾向預測為正類（詐欺），導致誤判正常交易。
-
+主要調整為scale_pos_weight，選擇15是因為執行出來的正負樣本比率為17倍，那測試過後15的表現是最好的
+max_depth=6深度太小會導致欠擬合，太大容易過擬合。爬文後深度 6 為 XGBoost 處理 tabular data 時的常見推薦值。
+學習率設為 0.08。在 0.05~0.2 範圍中測試後，0.08 能穩定學習且不會太快陷入局部最佳。
 ```python
 iso_forest = IsolationForest(
     n_estimators=500,                     
@@ -41,17 +41,8 @@ iso_forest = IsolationForest(
 )
 
 ```
-
-### 3. **設定預測機率閾值Threshold**
-
-用下來結果當 combined_score 的 threshold 調高至 0.3 以上時，Recall（召回率）明顯下降至 0.75 以下。
-推測是因為非監督式模型在資料不平衡或異常比例極低的情況下，其偵測結果準確性有限
-```python
-combined_score = 0.9 * xgb_prob + 0.1 * (-iso_scores)  # iso_scores 越小越異常
-combined_pred = (combined_score > 0.3).astype(int)
-
-
-### 4. **最終結果**
+每棵樹所使用的樣本數量設定為 "auto"，表示預設使用 min(256, n_samples)。這能平衡模型訓練速度與效能，且是官方建議的預設值。
+### 3. **最終結果**
 
 
 Combined (XGB + IsoForest) Evaluation:

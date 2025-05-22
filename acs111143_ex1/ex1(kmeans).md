@@ -3,39 +3,44 @@
 ### 1 訓練資料篩選
 - 使用正常(non-fraud)資料進行 KMeans 訓練  
 - 取前 1000 筆正常資料以降低計算成本  
-
+- 取前 100 筆不正常資料
 ### 2 參數調整
 ```python
-kmeans = KMeans(
-    n_clusters=optimal_k,       # 使用輪廓係數決定的最佳分群數
-    init='k-means++',           # 智能初始化群集中心，提升穩定性
-    n_init=20,                  # 多次初始化選最優，避免局部最佳解
-    max_iter=500,               # 設定單次運行的最大迭代次數
-    tol=1e-4,                   # 設定收斂的容忍度
-    random_state=RANDOM_SEED,   # 固定隨機種子以確保結果可重現 (RANDOM_SEED=42)
-    algorithm='elkan'           # 使用 Elkan 演算法提升特定情況下的計算效率
-)
+    RANDOM_SEED = 42
+    TEST_SIZE = 0.3
+    N_NORMAL_SEED = 1000
+    N_FRAUD_SEED = 100
+    N_PCA_COMPONENTS = 7
+    ENSEMBLE_RUNS = 1
 ```
+經過測試 N_NORMAL_SEED 只要不是1000 不管其他參數如何挑整都會是0
+PCA降維測試過5~20， 最終測試區間在5~10叫好， 細部測試後發現7是最高的(有個有趣的現象如果設定是4以下，那他會直接壞掉，Kmeans會無法聚合)
+使用ENSEMBLE_RUNS投票，發現這功能好像沒啥關係，推測因為數據極度不平衡所以每次投票結果都是一樣的，所以後來就把他設定為1了減少計算成本
 ---
 
 ## 3. 評估結果
+```python
+Kmeans (Unsupervised) Evaluation:
+=============================================
+         Accuracy: 0.9989817773252344
+  Precision Score: 0.8144329896907216
+     Recall Score: 0.5337837837837838
+         F1 Score: 0.6448979591836734
 
-| 指標         | 值                   |
-|--------------|----------------------|
-| Accuracy     | 0.9987               |
-| Precision    | 0.783                |
-| Recall       | 0.365                |
-| F1 Score     | 0.498                |
+Classification Report:
+              precision    recall  f1-score   support
 
-### Classification Report
+           0       1.00      1.00      1.00     85295
+           1       0.81      0.53      0.64       148
 
-| Class | Precision | Recall | F1-score | Support |
-|-------|-----------|--------|----------|---------|
-| 0     | 1.00      | 1.00   | 1.00     | 85295   |
-| 1     | 0.78      | 0.36   | 0.50     | 148     |
-
+    accuracy                           1.00     85443
+   macro avg       0.91      0.77      0.82     85443
+weighted avg       1.00      1.00      1.00     85443
+```
 ---
 
-## 4. Summary
+## 4. 其他探討
 
-雖然它能夠識別出部分詐欺模式（體現在尚可的精確率上），但其召回率相對較低，表明有較多詐欺案件被遺漏。在實際應用中，可能需要探索更複雜的異常偵測技術，或結合監督式學習模型 
+發現簡報上面的範例有先取一小部分的資料，且只挑選正常樣本，這樣能算是純非監督嗎?
+
+
