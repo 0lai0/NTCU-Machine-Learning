@@ -1,63 +1,55 @@
-### 1. **模型選擇：XGBoost 與 Isolation Forest**
+### 1. **模型選擇：KMeans 輔助特徵結合 XGBoost**
 
-我選擇使用 `XGBoost` 作為分類模型，原因如下：
 
-- **處理速度快**：XGBoost 是經過優化的梯度提升模型，能快速處理大量資料(因為我的電腦配備不好，Random Forest真的太慢了)。
-- **穩定性佳，表現強**：實務中在 Kaggle、金融、醫療等領域表現蠻好的。
+- **XGBoost**：
+  - 是一個高效的梯度提升樹（Gradient Boosting Decision Tree, GBDT）實作，訓練快速且效果優異。
+  - 對於不平衡資料（詐欺偵測中詐欺樣本極少）可透過參數 `scale_pos_weight` 進行調整。
+  - 具有良好的泛化能力與調參空間，適合本任務。
 
-我選擇使用 `Isolation Forest` 的理由:
+- **KMeans 聚類輔助特徵**：
+  - 對訓練資料做 PCA 降維後，使用 KMeans 進行聚類，並取得每筆資料到兩個中心點的距離作為新特徵。
+  - 這些距離特徵能提供模型額外的資料分布資訊，幫助提升判斷詐欺樣本的能力。
+  - 透過先使用部分有標籤的資料建立聚類中心，提升聚類的代表性。
 
-- **不需要依賴標籤即可學習資料分布特性、執行速度快**: 但是好像非監督式都挺快速的。
 ---
 
-### 2. **參數設定說明**
+### 2. **參數設定與流程說明**
 
-參數設計理由：
+- **資料前處理**：
+  - 移除 `Time` 欄位，因其無明顯意義。
+  - 對 `Amount` 欄位做標準化。
+  - 使用 PCA 降維，保留 7 個主成分，保持與原始特徵維度相近。
+  
+- **KMeans 聚類**：
+  - 使用部分訓練資料中正常與詐欺樣本分別挑選一定數量資料，建立初始聚類中心（`centroids_init`）。
+  - 用這些中心初始化 KMeans，避免隨機初始化造成效果不穩。
+  - 將資料點到兩個中心的距離作為額外特徵加入訓練資料。
+
+- **XGBoost 參數**：
 
 ```python
-xgb = XGBClassifier(
-    n_estimators=250,           # 樹的數量較多，增強模型表現
-    max_depth=6,                # 深度 適中，避免過度擬合
-    learning_rate=0.08,         # 低學習率，更穩健收斂
-    subsample=0.8,              # 80%樣本比例訓練，增加多樣性
-    colsample_bytree=1.0,       
-    scale_pos_weight=15,       # 約為非詐欺與詐欺比率，解決類別不平衡
-    gamma=0.05,                  # 控制樹的複雜度，防止過擬合
+xgb_model = XGBClassifier(
+    n_estimators=250,           # 樹數較多以強化模型
+    max_depth=6,                # 中等深度避免過擬合
+    learning_rate=0.08,         # 穩健學習率
+    subsample=0.8,              # 隨機抽樣訓練資料增加多樣性
+    colsample_bytree=1.0,       # 使用所有特徵
+    scale_pos_weight=10,        # 調整類別不平衡權重
+    gamma=0.05,                 # 控制樹複雜度避免過擬合
     use_label_encoder=False,
-    eval_metric='logloss',
+    eval_metric='aucpr',        # 以 AUC-PR 衡量表現
+    tree_method='hist',
     random_state=RANDOM_SEED
 )
 ```
-主要調整為scale_pos_weight，選擇15是因為執行出來的正負樣本比率為17倍，那測試過後15的表現是最好的
-max_depth=6深度太小會導致欠擬合，太大容易過擬合。爬文後深度 6 為 XGBoost 處理 tabular data 時的常見推薦值。
-學習率設為 0.08。在 0.05~0.2 範圍中測試後，0.08 能穩定學習且不會太快陷入局部最佳。
-```python
-iso_forest = IsolationForest(
-    n_estimators=500,                     
-    max_samples="auto",                  # 每棵樹使用的樣本數（自動選擇）
-    contamination=sum(y_train)/len(y_train), # 異常比例，設定為訓練集中詐欺樣本比例
-    random_state=RANDOM_SEED,            # 固定隨機種子以利重現
-    bootstrap=True                       
-)
 
-```
-每棵樹所使用的樣本數量設定為 "auto"，表示預設使用 min(256, n_samples)。這能平衡模型訓練速度與效能，且是官方建議的預設值。
-### 3. **最終結果**
+- **自動threshold**
 
 
-Combined (XGB + IsoForest) Evaluation:
-=============================================
-         Accuracy: 0.9995669627705019
-  Precision Score: 0.937007874015748
-     Recall Score: 0.8040540540540541
-         F1 Score: 0.8654545454545455
+利用模型預測的機率分數，設定較高閾值（0.80），提高 Precision 同時仍維持合理 Recall。
 
-Classification Report:
-              precision    recall  f1-score   support
+透過掃描不同閾值，找出最佳 F1-score 對應的閾值，取得模型最佳平衡點。
 
-           0       1.00      1.00      1.00     85295
-           1       0.94      0.80      0.87       148
+- **小結**
 
-    accuracy                           1.00     85443
-   macro avg       0.97      0.90      0.93     85443
-weighted avg       1.00      1.00      1.00     85443
+調整過後他的precison非常高但是recall卻沒有很理想，推測是模型較保守判定以及資料極度不平衡的緣故
