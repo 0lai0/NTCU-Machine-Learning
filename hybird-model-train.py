@@ -9,7 +9,6 @@ from sklearn.metrics import classification_report, average_precision_score
 import matplotlib.pyplot as plt
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import SMOTE
-import seaborn as sns
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.metrics import precision_recall_curve, f1_score
 from imblearn.combine import SMOTEENN
@@ -20,6 +19,13 @@ data = pd.read_csv("creditcard.csv")
 data['Amount'] = StandardScaler().fit_transform(data['Amount'].values.reshape(-1, 1))
 data = data.drop(['Time'], axis=1)
 
+# 分離特徵與標籤
+X = data.drop(columns=['Class'])
+y = data['Class']
+
+# 分割資料集
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
 #建立 IsolationForest 模型（無監督）
 iso_forest = IsolationForest(
     n_estimators = 600,
@@ -27,12 +33,19 @@ iso_forest = IsolationForest(
     random_state = 42,
     n_jobs = 4
 )
-iso_scores = iso_forest.fit_predict(data.drop(columns=['Class']))  # -1 代表異常，1 代表正常
-anomaly_score = iso_forest.decision_function(data.drop(columns=['Class']))  # 分數越小越可能異常
+iso_scores = iso_forest.fit_predict(X_train)  # -1 代表異常，1 代表正常
+anomaly_score = iso_forest.decision_function(X_train)  # 分數越小越可能異常
 
-#加入為新特徵
-data['isolation_label'] = (iso_scores == -1).astype(int)
-data['anomaly_score'] = anomaly_score
+# 對訓練資料產生異常標籤與分數
+X_train['isolation_label'] = (iso_scores == -1).astype(int)
+X_train['anomaly_score'] = anomaly_score
+
+iso_scores_test = iso_forest.predict(X_test)
+anomaly_scores_test = iso_forest.decision_function(X_test)
+
+# 對測試資料產生異常標籤與分數（模型沒再重新訓練）
+X_test['isolation_label'] = (iso_scores_test == -1).astype(int)
+X_test['anomaly_score'] = anomaly_scores_test
 
 # lof = LocalOutlierFactor(n_neighbors=20, contamination=0.001)
 # lof_labels = lof.fit_predict(data.drop(columns=['Class']))
@@ -50,13 +63,6 @@ data['anomaly_score'] = anomaly_score
 # plt.legend()
 # plt.show()
 
-# 分離特徵與標籤
-X = data.drop(columns=['Class'])
-y = data['Class']
-
-# 分割資料集
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
 #  Undersampling
 # rus = RandomUnderSampler(random_state=42)
 # X_resampled, y_resampled = rus.fit_resample(X_train, y_train)
@@ -65,9 +71,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 # X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
 
 # smote_enn = SMOTEENN(random_state=42)
-# X_resampled, y_resampled = smote_enn.fit_resample(X_train, y_train)
-
-# X_train , y_train = X_resampled, y_resampled
+# X_train , y_train = smote_enn.fit_resample(X_train, y_train)
 
 #資料resample後的視覺化比對
 # labels = ['Negative', 'Positive']
@@ -96,14 +100,15 @@ model = XGBClassifier(
     use_label_encoder=False,
     eval_metric='logloss',
     random_state = 42,
-    max_depth = 7,
+    max_depth = 5,
     n_jobs = 4,
-    early_stopping_rounds = 10,
     scale_pos_weight = (len(y_train[y_train==0]) / len(y_train[y_train==1])),  # class imbalance
+    early_stopping_rounds = 10
 )
 # early_stopping_rounds = 10,
 #scale_pos_weight=len(y_resampled[y_resampled==0]) / len(y_resampled[y_resampled==1]),  # class imbalance
-
+# subsample=0.8,
+# colsample_bytree=0.8,
 model.fit(
     X_train, y_train,
     verbose = False,
@@ -114,20 +119,20 @@ evals_result = model.evals_result()
 
 #early_stopping_rounds=10,
 
-# 4. 繪製學習曲線
-# epochs = len(evals_result['validation_0']['logloss'])
-# x_axis = range(epochs)
+#4. 繪製學習曲線
+epochs = len(evals_result['validation_0']['logloss'])
+x_axis = range(epochs)
 
-# plt.figure(figsize=(8, 5))
-# plt.plot(x_axis, evals_result['validation_0']['logloss'], label='Train')
-# plt.plot(x_axis, evals_result['validation_1']['logloss'], label='Test')
-# plt.xlabel("Epoch")
-# plt.ylabel("Log Loss")
-# plt.title("XGBoost Learning Curve (Log Loss)")
-# plt.legend()
-# plt.grid(True)
-# plt.tight_layout()
-# plt.show()
+plt.figure(figsize=(8, 5))
+plt.plot(x_axis, evals_result['validation_0']['logloss'], label='Train')
+plt.plot(x_axis, evals_result['validation_1']['logloss'], label='Test')
+plt.xlabel("Epoch")
+plt.ylabel("Log Loss")
+plt.title("XGBoost Learning Curve (Log Loss)")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
 
 #比較traning error、testing error
 y_train_pred = model.predict(X_train)
@@ -140,12 +145,6 @@ print(f'Training error and Testing error:')
 print('===' * 15)
 print(f"Training Error (recall): {train_error}")
 print(f"Testing Error (recall): {test_error}")
-
-# 預測
-y_pred = model.predict(X_test)
-y_prob = model.predict_proba(X_test)[:, 1]
-#設定Threshold
-#y_pred = (y_prob >= 0.9515).astype(int)
 
 def evaluation(y_true, y_pred, y_prob, model_name="Model"):
    accuracy = accuracy_score(y_true, y_pred)
@@ -163,8 +162,14 @@ def evaluation(y_true, y_pred, y_prob, model_name="Model"):
    print("\nClassification Report:")
    print(classification_report(y_true, y_pred))
 
+# 預測
+y_pred = model.predict(X_test)
+y_prob = model.predict_proba(X_test)[:, 1]
+
+print("預設的threshold")
 evaluation(y_test, y_pred, y_prob, model_name="Hybird")
 
+#計算最佳threshold
 precisions, recalls, thresholds = precision_recall_curve(y_test, y_prob)
 f1s = 2 * (precisions * recalls) / (precisions + recalls + 1e-10)
 best_index = np.argmax(f1s)
@@ -180,12 +185,12 @@ plt.grid(True)
 plt.legend()
 plt.show()
 
+#設定Threshold
+y_pred = (y_prob >= best_threshold).astype(int)
 
-# 輸出大於0.9的recall和當前的Threshold
-# target_recall = 0.86
-# for p, r, t in zip(precisions, recalls, thresholds):
-#     if r >= target_recall:
-#         print(f"達到 Recall={r:.3f} 時，Precision={p:.3f}，Threshold={t:.4f}")
+print("F1 score with best threshold:", f1_score(y_test, y_pred))
+
+evaluation(y_test, y_pred, y_prob, model_name="Hybird")
 
 # 評估
 #print("Classification Report:\n", classification_report(y_test, y_pred))

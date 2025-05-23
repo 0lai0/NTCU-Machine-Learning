@@ -33,7 +33,13 @@ Y = np.asarray(data.iloc[:, data.columns == 'Class'])
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=TEST_SIZE, random_state=RANDOM_SEED)
 
 # build Random Forest model
-rf_model = RandomForestClassifier(n_estimators=100, random_state=RANDOM_SEED)
+rf_model = RandomForestClassifier(
+    n_estimators = 300,
+    verbose = True,
+    n_jobs = 4,
+    class_weight = {0: 1, 1: 7} ,
+    random_state = RANDOM_SEED
+    )
 rf_model.fit(X_train, y_train)
              
 # define evaluation function
