@@ -8,6 +8,9 @@ from sklearn.metrics import (
 )
 import kagglehub
 
+# 提高閾值能降低誤判
+# 讓模型在建樹時對少數類（fraud）給更高權重
+
 # 參數
 RANDOM_SEED = 42
 TEST_SIZE = 0.3
@@ -37,7 +40,8 @@ X_test  = scaler.transform(X_test)
 rf_model = RandomForestClassifier(
     n_estimators=100,
     random_state=RANDOM_SEED,
-    class_weight='balanced_subsample'  # 建議同時開啟平衡權重
+    # 讓模型在建樹時對少數類（fraud）給更高權重
+    class_weight='balanced_subsample
 )
 rf_model.fit(X_train, y_train)
 
