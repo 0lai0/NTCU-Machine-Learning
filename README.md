@@ -85,3 +85,4 @@ For questions or issues, contact the teaching assistant via:
 - Email: [bcs113116@gm.ntcu.edu.tw]
 - Email: [bcs113115@gm.ntcu.edu.tw]
 ---
+conda activate test
