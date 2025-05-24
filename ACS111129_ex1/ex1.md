@@ -61,6 +61,19 @@ rf_best = RandomForestClassifier(
 ---
 
 ## 非監督式學習實驗結果
+* Accuracy: 比範例多約 **0.00002**
+* Precision Score: 比範例多約 **0.06**
+* Recall Score: 比範例多約 **0.02**
+* F1 Score: 比範例多約 **0.01**
 
+![alt text](image-12.png)
+
+### 參數調整說明
+主要使用了**PCA**降低特徵值維度，測試下來維度25會使結果最好，再低會造成資料過於簡化而抓不到詐欺交易
+```
+pca = PCA(n_components=25)
+x_train = pca.fit_transform(x_train)
+x_test = pca.transform(x_test)
+```
 ### 原本
 ![alt text](image-10.png)
