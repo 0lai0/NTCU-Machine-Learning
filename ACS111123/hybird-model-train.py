@@ -151,6 +151,7 @@ def evaluation(y_true, y_pred, y_prob, model_name="Model"):
    precision = precision_score(y_true, y_pred, zero_division=0)
    recall = recall_score(y_true, y_pred)
    f1 = f1_score(y_true, y_pred)
+   conf_matrix = confusion_matrix(y_true, y_pred)
 
    print(f'\n{model_name} Evaluation:')
    print('===' * 15)
@@ -159,6 +160,7 @@ def evaluation(y_true, y_pred, y_prob, model_name="Model"):
    print('     Recall Score:', recall)
    print('         F1 Score:', f1)
    print(f"           AUPRC: {average_precision_score(y_test, y_prob)}")
+   print(' Confusion matrix:\n', conf_matrix)
    print("\nClassification Report:")
    print(classification_report(y_true, y_pred))
 
