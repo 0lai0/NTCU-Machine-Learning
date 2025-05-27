@@ -58,9 +58,8 @@ Precision：增加約0.01
 Recall：增加約0.007
 F1：增加約0.01
 
-> 實驗方法&心得
+> * 實驗方法&心得
 在實驗過程中我嘗試使用AutoEncoder、lightGBM實驗，但結果都沒有isolation forest+XGBoost的結果來得好，isolation forest前我先使用PCA降維，刪除掉一些不必要的特徵值，再用isolation forest並將訓練結果作為一個特徵值加到training data中，接著利用監督式學習，透過n_estimators、scale_pos_weight的調整，讓模型更複雜但不至於overfitting
-* 說明：
 
 * **實驗過程**：
     *  實驗1：xgboost `n_estimators=200`
