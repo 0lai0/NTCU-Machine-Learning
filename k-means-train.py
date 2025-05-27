@@ -40,8 +40,12 @@ x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
 # Select a small sample of normal (non-fraud) data for unsupervised training
-n_x_train = x_train[y_train == 0]
-n_x_train = n_x_train[:1000]
+# n_x_train = x_train[y_train == 0]
+# n_x_train = n_x_train[:1000]
+# 在 Silhouette Score 中新增包含有詐騙的案例
+normal = x_train[y_train == 0][:800]
+fraud  = x_train[y_train == 1][:200]
+n_x_train = np.vstack([normal, fraud])
 
 scores = []
 for k in range(2, 5):

@@ -34,7 +34,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=TEST_SIZE, r
 
 # build Random Forest model
 rf_model = RandomForestClassifier(
-    n_estimators = 300,
+    n_estimators = 200,
     verbose = True,
     n_jobs = 4,
     class_weight = {0: 1, 1: 7} ,
@@ -65,7 +65,7 @@ y_pred = rf_model.predict(X_test)
 # 取得模型預測機率（不是 predict，而是 predict_proba）
 y_scores = rf_model.predict_proba(X_test)[:, 1]  # 第二欄是 positive class 的機率
 
-print(evaluation(y_test, y_pred, y_scores))
+evaluation(y_test, y_pred, y_scores)
 
 # 儲存模型到檔案
 joblib.dump(rf_model, f"random-forest-SEED-{RANDOM_SEED}.pkl")

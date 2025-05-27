@@ -103,7 +103,7 @@ model = XGBClassifier(
     max_depth = 5,
     n_jobs = 4,
     scale_pos_weight = (len(y_train[y_train==0]) / len(y_train[y_train==1])),  # class imbalance
-    early_stopping_rounds = 10
+    early_stopping_rounds = 10,
 )
 # early_stopping_rounds = 10,
 #scale_pos_weight=len(y_resampled[y_resampled==0]) / len(y_resampled[y_resampled==1]),  # class imbalance
