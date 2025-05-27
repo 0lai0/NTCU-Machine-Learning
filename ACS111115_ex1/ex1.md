@@ -63,3 +63,79 @@ XGBClassifier(
 
 ## 資料集
 - ULB Machine Learning Group（2016）。[Credit Card Fraud Detection Dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud/data)，Kaggle。
+
+# Credit Card Fraud Detection using Autoencoder
+
+## 實驗結果
+![image](image-3.png)
+## 簡介
+利用機器學習技術，對信用卡交易進行分類，辨識出可能的詐騙交易。使用公開資料集 Credit Card Fraud Detection，並透過 Autoencoder 來建立模型，進行分類任務。
+
+該資料集極度不平衡，Fraudulent:492, non-fraudulent:284315
+the positive class (frauds) percentage: 492/284807 (0.173%)
+
+class 0/1, 0 = 非詐欺資料; 1 =詐欺資料;
+
+## 使用環境
+Anaconda (conda)
+conda venv 自定義虛擬環境
+python 版本 3.10.15
+
+```bash
+conda create -n venv python=3.10.15
+conda activate venv
+```
+## 使用套件
+```bash
+os
+torch
+numpy
+pandas
+sklearn.model_selection
+sklearn.preprocessing
+sklearn.metrics
+matplotlib.pyplot
+kagglehub
+imblearn.over_sampling
+```
+
+## AutoEncoder 模型與原理說明
+AutoEncoder 是一種無監督學習的神經網路結構，主要用於資料降維、特徵學習或異常偵測。是多層神經網絡的一種非監督式學習算法，稱為自動編碼器，它可以幫助資料分類、視覺化、儲存。其架構中可細分為 Encoder（編碼器）和 Decoder（解碼器）兩部分，它們分別做壓縮與解壓縮的動作，讓輸出值和輸入值表示相同意義
+
+**AutoEncoder = Encoder + Decoder**
+在處理異常偵測時。可以像PCA一樣，可以從input擷取重要特徵，代表全體。當新的測試資料進來，和這樣的代表特徵比對，就可以判斷是不是異常。
+
+在訓練過程中，模型透過最小化輸入與重建輸出之間的差異（例如 MSE 損失），逐步調整參數。若測試資料的重建誤差過大，表示該樣本可能不符合模型學到的「正常樣本」特徵，可視為異常。
+
+
+**使用參數 及 網路架構**
+```bash
+input_dim 29
+encoding_dim 17
+activation Tanh, ReLU
+loss function MSELoss()
+optimizer Adam(lr=0.001)
+epochs 100
+batch_size 64
+val_size 10%
+hidden_dim 8
+
+self.encoder = nn.Sequential(
+            nn.Linear(input_dim, encoding_dim),
+            nn.Tanh(),
+            nn.Linear(encoding_dim, hidden_dim),
+            nn.ReLU()
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(hidden_dim, encoding_dim),
+            nn.Tanh(),
+            nn.Linear(encoding_dim, input_dim)
+        )
+```
+
+## 參考資料
+- [AutoEncoder (一)-認識與理解](https://medium.com/ml-note/autoencoder-%E4%B8%80-%E8%AA%8D%E8%AD%98%E8%88%87%E7%90%86%E8%A7%A3-725854ab25e8)，作者：
+Moris，發布於 Medium
+
+## 資料集
+- ULB Machine Learning Group（2016）。[Credit Card Fraud Detection Dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud/data)，Kaggle。
