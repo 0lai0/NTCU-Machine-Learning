@@ -2,6 +2,13 @@
 **NTCU-Machine-Learning** repository for the Machine Learning course at NTCU. 
 This repository is used for submitting assignments related to machine learning projects, with a focus on **Credit Card Fraud Detection**.
 
+## My result
+
+### Hybird
+
+![image](https://github.com/user-attachments/assets/23dadf16-9252-45a4-b4b2-a80df868f334)
+
+
 ## Project Overview
 This assignment focuses on building a machine learning model for **credit card fraud detection**. 
 You will use a dataset to train and evaluate models, applying techniques such as data preprocessing, feature scaling, and classification algorithms (e.g., Random Forest) or clustering (e.g., KMeans).
