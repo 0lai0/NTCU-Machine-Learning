@@ -2,6 +2,48 @@
 **NTCU-Machine-Learning** repository for the Machine Learning course at NTCU. 
 This repository is used for submitting assignments related to machine learning projects, with a focus on **Credit Card Fraud Detection**.
 
+### 紀錄過程的筆記連結
+- https://hackmd.io/@sunfrancis12/ry9fEv3Wxe
+
+## My Results (ACS111123 孫宇衡)
+
+### random-forest 
+
+學長姐範例
+
+![image](https://hackmd.io/_uploads/rJQ7eJXMgl.png)
+
+我的結果
+
+![image](https://hackmd.io/_uploads/SyVDWJ7fxe.png)
+
+### K-means
+
+我的結果
+
+![image](https://hackmd.io/_uploads/Hky4HJXfll.png)
+
+
+### Hybird model
+
+學長姐範例:
+
+![image](https://hackmd.io/_uploads/HkTye17Mee.png)
+
+
+我的結果
+
+![image](https://hackmd.io/_uploads/S18GjRMMgl.png)
+
+Training 和 Testing Loss
+
+![Hybird-loss](https://hackmd.io/_uploads/SybBARGfeg.png)
+
+Thershold vs. F1 Score
+
+![Hybird-Threshold](https://hackmd.io/_uploads/SJSE0Affgl.png)
+
+
 ## Project Overview
 This assignment focuses on building a machine learning model for **credit card fraud detection**. 
 You will use a dataset to train and evaluate models, applying techniques such as data preprocessing, feature scaling, and classification algorithms (e.g., Random Forest) or clustering (e.g., KMeans).
