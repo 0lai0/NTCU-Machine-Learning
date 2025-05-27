@@ -77,5 +77,5 @@ F1：增加約0.01
     *   實驗7：isolation`max_features=15`
         ![alt text](image-14.png)
     *   實驗8：threshold=0.4
-        ![alt text](image-16.png)
+        ![alt text](image-17.png)
 
