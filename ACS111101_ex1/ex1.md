@@ -21,7 +21,24 @@
     rf_model.fit(X_train, Y_train)
 
 ```
-![alt text](S__3481637.jpg)
+```
+Random Forest(Supervised) Evaluation:
+=============================================
+         Accuracy: 0.9996488887328394
+  Precision Score: 0.9416666666666667
+     Recall Score: 0.8308823529411765
+         F1 Score: 0.8828125
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85307
+           1       0.94      0.83      0.88       136
+
+    accuracy                           1.00     85443
+   macro avg       0.97      0.92      0.94     85443
+weighted avg       1.00      1.00      1.00     85443
+```
 > 相較於範例
 Accuracy：增加約0.00001
 Precision：增加約0.0005
@@ -115,7 +132,24 @@ p.s. 由於只有一個資料集，因此對同一個資料集進行有放回的
        n_init=20
        )
 ```
-![alt text](image.png)
+```
+KMeans (Unsupervised) Evaluation:
+=============================================
+         Accuracy: 0.9987477031471274
+  Precision Score: 0.7887323943661971
+     Recall Score: 0.3783783783783784
+         F1 Score: 0.5114155251141552
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85295
+           1       0.79      0.38      0.51       148
+
+    accuracy                           1.00     85443
+   macro avg       0.89      0.69      0.76     85443
+weighted avg       1.00      1.00      1.00     85443
+```
 > 相較於範例
 Accuracy：增加約0.00002
 Precision：增加約0.006

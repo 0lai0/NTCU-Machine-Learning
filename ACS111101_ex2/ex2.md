@@ -51,7 +51,24 @@ threshold = 0.4
 y_proba = xg_model.predict_proba(x_test)[:, 1]  # 取得預測為正類（詐欺）的機率
 y_pred = (y_proba > threshold).astype(int)
 ```
-![alt text](image-15.png)
+```
+Hybrid Model Evaluation:
+=============================================
+         Accuracy: 0.9996957035684608
+  Precision Score: 0.9365079365079365
+     Recall Score: 0.8676470588235294
+         F1 Score: 0.9007633587786259
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85307
+           1       0.94      0.87      0.90       136
+
+    accuracy                           1.00     85443
+   macro avg       0.97      0.93      0.95     85443
+weighted avg       1.00      1.00      1.00     85443
+```
 > 相較於範例
 Accuracy：增加約0.00003
 Precision：增加約0.01
