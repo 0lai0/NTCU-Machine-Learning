@@ -47,16 +47,16 @@ xg_model = XGBClassifier(
 xg_model.fit(x_train, y_train)
 
 # Step 5: 預測測試集
-threshold = 0.3
+threshold = 0.4
 y_proba = xg_model.predict_proba(x_test)[:, 1]  # 取得預測為正類（詐欺）的機率
 y_pred = (y_proba > threshold).astype(int)
 ```
-![alt text](image-13.png)
+![alt text](image-15.png)
 > 相較於範例
-Accuracy：增加約0.00001
-Precision：增加約0.001
+Accuracy：增加約0.00003
+Precision：增加約0.01
 Recall：增加約0.007
-F1：增加約0.004
+F1：增加約0.01
 * 說明：
 
 * **實驗過程**：
@@ -74,4 +74,6 @@ F1：增加約0.004
         ![alt text](image-12.png)
     *   實驗7：isolation`max_features=15`
         ![alt text](image-14.png)
+    *   實驗8：threshold=0.4
+        ![alt text](image-16.png)
 
