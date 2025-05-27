@@ -17,9 +17,9 @@ pca = PCA(n_components=25)  # 嘗試 2-20 的不同值
 x_train = pca.fit_transform(x_train)
 x_test = pca.transform(x_test)
 
-# Step 1: 用正常交易訓練 Isolation Forest
+# Step 1: 用全部交易訓練 Isolation Forest
 iso = IsolationForest(
-    contamination=0.0017, #因為給予的資料都是正常交易，沒有詐欺交易，所以讓模型自己找異常的比例
+    contamination=0.0017, 
     random_state=RANDOM_SEED,
     n_estimators=600,
     max_features=15,
@@ -57,6 +57,9 @@ Accuracy：增加約0.00003
 Precision：增加約0.01
 Recall：增加約0.007
 F1：增加約0.01
+
+> 實驗方法&心得
+在實驗過程中我嘗試使用AutoEncoder、lightGBM實驗，但結果都沒有isolation forest+XGBoost的結果來得好，isolation forest前我先使用PCA降維，刪除掉一些不必要的特徵值，再用isolation forest並將訓練結果作為一個特徵值加到training data中，接著利用監督式學習，透過n_estimators、scale_pos_weight的調整，讓模型更複雜但不至於overfitting
 * 說明：
 
 * **實驗過程**：
