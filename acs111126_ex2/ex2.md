@@ -45,7 +45,7 @@ weighted avg       1.00      1.00      1.00     85443
 Overview: Sightly better F1 Score, would have taken more time if not for other people who helped, also as I said the false positive and false negative rate is also relatively low so isolation forest did not work well for me, I don't kmow how others approched this problem but I mainly focused on improving xgboost. (overall 6 hrs total work time)
 
 
-#bro i can't figure out a way to make this not lower the score. isoforest is not great at doing this in this case.
+
 ## References
 Isoation Forest: https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.IsolationForest.html (not the only source but the only one ended up in the final product)
 
