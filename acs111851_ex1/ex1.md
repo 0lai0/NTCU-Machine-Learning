@@ -1,50 +1,50 @@
 ## 監督式學習
-一開始先採用隨機森林來做參數調整，但測試了多組數據與超參數設置後發現結果不盡理想
-難以全面超越原始數據結果
-所以後來改採用 XGBoost做參數設置與調整
+一開始先採用隨機森林來做參數調整，但測試了多組數據與超參數設置後發現結果不盡理想  
+難以全面超越原始數據結果  
+所以後來改採用 XGBoost做參數設置與調整  
 ### 資料集分析
-信用卡詐欺預測是一個 二元分類問題（fraud vs. non-fraud），且資料極度不平衡（fraud 約佔 0.17%）。
-這類問題的挑戰可分為以下兩點:
-1.資料不平衡（少數類別重要）
-2.權重差異大，容易導致過擬合或忽略少數類別
-### 而 XGBoost 優點
-針對不平衡分類問題的強化支援：scale_pos_weight 可自訂正負樣本重要性
-梯度提升決策樹（GBDT）核心：具備優異的泛化能力
-可調超參數較多元：可控制模型複雜度、防止過擬合等等
-內建 early stopping 與 logloss 最佳化：適合處理詐欺偵測這類 precision/recall 驅動的任務
+信用卡詐欺預測是一個 二元分類問題（fraud vs. non-fraud），且資料極度不平衡（fraud 約佔 0.17%）  
+這類問題的挑戰可分為以下兩點:  
+1.資料不平衡（少數類別重要）  
+2.權重差異大，容易導致過擬合或忽略少數類別  
+### 而 XGBoost 優點  
+針對不平衡分類問題的強化支援：scale_pos_weight 可自訂正負樣本重要性  
+梯度提升決策樹（GBDT）核心：具備優異的泛化能力  
+可調超參數較多元：可控制模型複雜度、防止過擬合等等  
+內建 early stopping 與 logloss 最佳化：適合處理詐欺偵測這類 precision/recall 驅動的任務  
 
 ### 模型與參數設定說明
-共使用了以下參數去做調整
-xgb_model = XGBClassifier(
-    n_estimators=200,
-    max_depth=7,
-    learning_rate=0.1,
-    min_child_weight=1,
-    gamma=0.2,
-    subsample=0.9,
-    colsample_bytree=0.9,
-    scale_pos_weight=200,
-    random_state=RANDOM_SEED,
-    eval_metric='logloss'
-)
+共使用了以下參數去做調整  
+xgb_model = XGBClassifier(  
+    n_estimators=200,  
+    max_depth=7,  
+    learning_rate=0.1,  
+    min_child_weight=1,  
+    gamma=0.2,  
+    subsample=0.9,  
+    colsample_bytree=0.9,  
+    scale_pos_weight=200,  
+    random_state=RANDOM_SEED,  
+    eval_metric='logloss'  
+)  
 ### 各核心參數說明與調整邏輯
-參數	作用	調整邏輯
-n_estimators=200	樹的數量	初期設成中等值，避免過擬合
-max_depth=7	每棵樹最大深度	控制模型複雜度，7 通常是中等偏高值
-learning_rate=0.1	學習率	預設學習率，與樹數互補（越小要更多樹）
-min_child_weight=1	最小葉節點權重和	設為 1，允許模型擷取細微差異
-gamma=0.2	節點分裂的最小損失減益	抑制過度分裂（過擬合風險）
-subsample=0.9	每棵樹訓練時使用的樣本比例	降低過擬合
-colsample_bytree=0.9	每棵樹訓練時使用的特徵比例	降低特徵依賴性
-scale_pos_weight=200	權重平衡（樣本不平衡）	根據「負樣本數 / 正樣本數」設定，大約 = 85307 / 136 ≈ 627，但你採用 200 是經實驗調整的折衷值，為了 提高 recall 同時保持 high precision
-eval_metric='logloss'	評估指標	適合機率預測任務，與 precision/recall 不衝突
+參數	作用	調整邏輯  
+n_estimators=200	樹的數量	初期設成中等值，避免過擬合  
+max_depth=7	每棵樹最大深度	控制模型複雜度，7 通常是中等偏高值  
+learning_rate=0.1	學習率	預設學習率，與樹數互補（越小要更多樹）  
+min_child_weight=1	最小葉節點權重和	設為 1，允許模型擷取細微差異  
+gamma=0.2	節點分裂的最小損失減益	抑制過度分裂（過擬合風險）  
+subsample=0.9	每棵樹訓練時使用的樣本比例	降低過擬合  
+colsample_bytree=0.9	每棵樹訓練時使用的特徵比例	降低特徵依賴性  
+scale_pos_weight=200	權重平衡（樣本不平衡）	根據「負樣本數 / 正樣本數」設定，大約 = 85307 / 136 ≈ 627，但你採用 200 是經實驗調整的折衷值，為了 提高 recall 同時保持 high precision  
+eval_metric='logloss'	評估指標	適合機率預測任務，與 precision/recall 不衝突  
 ### 門檻調整（閾值設定）
-y_probs = xgb_model.predict_proba(X_test)[:, 1]
-取得預測機率後，因為threshold預設值為 = 0.5
-這邊選擇不直接使用預設門檻（0.5）分類
+y_probs = xgb_model.predict_proba(X_test)[:, 1]  
+取得預測機率後，因為threshold預設值為 = 0.5  
+這邊選擇不直接使用預設門檻（0.5）分類  
 而是透過以下邏輯：
-去找一組最佳的 threshold 來用
-precision, recall, thresholds = precision_recall_curve(y_test, y_probs)
+去找一組最佳的 threshold 來用  
+precision, recall, thresholds = precision_recall_curve(y_test, y_probs)  
 f1_scores = 2 * (precision * recall) / (precision + recall + 1e-8)
 best_idx = np.argmax(f1_scores)
 best_threshold = 0.941
