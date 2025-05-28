@@ -24,7 +24,7 @@ xgb_model = XGBClassifier(
     colsample_bytree=0.9,  
     scale_pos_weight=200,  
     random_state=RANDOM_SEED,  
-    eval_metric='logloss' 
+    eval_metric='logloss'  
 ### 各核心參數說明與調整邏輯
 參數	作用	調整邏輯  
 n_estimators=200	樹的數量	初期設成中等值，避免過擬合  
