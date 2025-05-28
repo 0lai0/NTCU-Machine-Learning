@@ -12,7 +12,6 @@
 梯度提升決策樹（GBDT）核心：具備優異的泛化能力  
 可調超參數較多元：可控制模型複雜度、防止過擬合等等  
 內建 early stopping 與 logloss 最佳化：適合處理詐欺偵測這類 precision/recall 驅動的任務  
-
 ### 模型與參數設定說明
 共使用了以下參數去做調整  
 xgb_model = XGBClassifier(  
