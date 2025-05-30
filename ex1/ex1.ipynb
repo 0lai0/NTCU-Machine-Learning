@@ -1,0 +1,92 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score, accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
+from sklearn.utils import resample
+from imblearn.over_sampling import SMOTE
+from xgboost import XGBClassifier
+import kagglehub
+
+# general setting. do not change TEST_SIZE
+RANDOM_SEED = 42
+TEST_SIZE = 0.3
+
+# load dataset（from kagglehub）
+path = kagglehub.dataset_download("mlg-ulb/creditcardfraud")
+data = pd.read_csv(f"{path}/creditcard.csv")
+data['Class'] = data['Class'].astype(int)
+#取出 Class 欄位，轉成int
+
+# prepare data
+data = data.drop(['Time'], axis=1)
+data['Amount'] = StandardScaler().fit_transform(data['Amount'].values.reshape(-1, 1))
+#把金額標準化
+
+fraud = data[data['Class'] == 1]
+nonfraud = data[data['Class'] == 0]
+print(f'Fraudulent:{len(fraud)}, non-fraudulent:{len(nonfraud)}')
+print(f'the positive class (frauds) percentage: {len(fraud)}/{len(fraud) + len(nonfraud)} ({len(fraud)/(len(fraud) + len(nonfraud))*100:.3f}%)')    
+#顯示詐騙佔比
+
+
+X = data.drop('Class', axis=1).values
+Y = data['Class'].values  # 轉成一維
+
+# split training set and data set
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=TEST_SIZE, random_state=RANDOM_SEED)
+#把資料切成訓練集和測試集
+
+train_data = pd.DataFrame(X_train, columns=data.columns[:-1])
+train_data['Class'] = y_train
+
+fraud = train_data[train_data['Class'] == 1]#詐騙
+nonfraud = train_data[train_data['Class'] == 0]#非詐騙
+
+nonfraud_downsampled = resample(nonfraud, replace=False, n_samples=len(fraud)*500, random_state=RANDOM_SEED)
+# 欠取樣：非詐騙樣本數設為詐騙的500倍
+
+data_balanced = pd.concat([fraud, nonfraud_downsampled]).sample(frac=1, random_state=RANDOM_SEED)
+# 合併並打亂
+
+X_train = data_balanced.drop('Class', axis=1).values
+y_train = data_balanced['Class'].values
+
+
+xgb_model = XGBClassifier(
+    scale_pos_weight=500,  #樣本的權重(非詐騙樣本數設為詐騙的500倍)
+    n_estimators=300,#決策樹數量
+    max_depth=6,#每棵樹的最大深度
+    learning_rate=0.1,
+    subsample=0.8,#	每棵樹訓練時，隨機抽樣使用 80% 的樣本
+    colsample_bytree=0.8,#	每棵樹訓練時，隨機抽樣 80% 的特徵
+    eval_metric='logloss',
+    random_state=RANDOM_SEED
+)
+xgb_model.fit(X_train, y_train)
+
+# define evaluation function
+def evaluation(y_true, y_pred, model_name="Model"):
+    accuracy = accuracy_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+    f1 = f1_score(y_true, y_pred)
+
+    print(f'\n{model_name} Evaluation:')
+    print('===' * 15)
+    print('         Accuracy:', accuracy)
+    print('  Precision Score:', precision)
+    print('     Recall Score:', recall)
+    print('         F1 Score:', f1)
+    print("\nClassification Report:")
+    print(classification_report(y_true, y_pred))
+    
+y_pred_proba = xgb_model.predict_proba(X_test)[:, 1]
+threshold = 0.89  #數字越大越保守
+y_pred = (y_pred_proba >= threshold).astype(int)#依據指定的 threshold，把預測機率轉換成最終的 0 或 1。
+evaluation(y_test, y_pred, "XGBoost")
+
+
