@@ -82,7 +82,7 @@ X_train = np.hstack([X_train, train_anomaly_score.reshape(-1,1)])
 X_test = np.hstack([X_test, test_anomaly_score.reshape(-1,1)])
 
 xgb_model = XGBClassifier(
-    scale_pos_weight=1500,  #樣本的權重(非詐騙樣本數設為詐騙的500倍)
+    scale_pos_weight=1500,  #樣本的權重
     n_estimators=500,#決策樹數量
     max_depth=6,#每棵樹的最大深度
     learning_rate=0.1,
@@ -126,8 +126,6 @@ for threshold in thresholds:
     if f1 > best_f1:
         best_f1 = f1
         best_threshold = threshold
-
-print(f"Best threshold: {best_threshold:.2f} with F1-score: {best_f1:.4f}")
 
 # 用最佳 threshold 預測
 y_pred = (y_pred_proba >= best_threshold).astype(int)
