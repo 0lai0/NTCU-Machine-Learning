@@ -6,7 +6,7 @@
 
 ---
 
-## 📁 使用資料集
+## 使用資料集
 
 - 資料來源：[Kaggle - Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)
 - 總筆數：284,807
@@ -15,7 +15,7 @@
 
 ---
 
-## ⚙️ 實驗設定
+## 實驗設定
 
 - 使用固定設定：
   - `RANDOM_SEED = 42`
@@ -28,14 +28,14 @@
 
 ---
 
-## 🧠 使用的模型
+##使用的模型
 
 ### 1. 監督式學習
 - 套件：`sklearn.ensemble.RandomForestClassifier`
 - 調整參數：
   ```python
   rf_model = RandomForestClassifier(
-      n_estimators=100,
+      n_estimators=100, 
       random_state=42
   )
   ```
