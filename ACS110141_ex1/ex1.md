@@ -2,6 +2,7 @@
 **使用XGBoost**<br>
 ![image](https://github.com/piHD/NTCU-Machine-Learning/blob/main/ACS110141_ex1/result_Pic/XGBoost.png)<br>
 - 透過迴圈測試不同learning rate和threshold對應其他參數調整後，以目前數據得到最佳結果。
+- 去除掉分測試與訓練資料為了分割後，保持挑選的資料中有不同的class的stratify(分層)，使原先0.87的f1 score提升成0.89。
 
 # 非監督式學習
 **使用IsolationForest**<br>
