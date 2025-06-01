@@ -28,7 +28,7 @@
 
 ---
 
-##使用的模型
+## 使用的模型
 
 ### 1. 監督式學習
 - 套件：`sklearn.ensemble.RandomForestClassifier`
