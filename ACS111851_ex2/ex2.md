@@ -38,11 +38,11 @@ random_state=42：確保可重現。
 因為此資料集中詐騙樣本數較少，dataset也呈現高度不平衡的現象
 所以調整設置了scale_pos_weight參數，提高詐騙樣本在資料集中的重要性權重
 ### 最後使用的參數設定
-參數	             設定值                參數定義
-n_estimators	    [500]	       提供足夠學習輪數以擬合複雜決策邊界  
-max_depth	        [7]	         控制模型複雜度，過深可能過擬合  
-learning_rate	    [0.3]	       探索不同收斂速度，避免 overshoot   
-scale_pos_weight	[6]          對應類別不平衡程度，用以提高詐騙樣本的重要性權重  
+參數	             設定值                參數定義  
+n_estimators	    [500]	       提供足夠學習輪數以擬合複雜決策邊界    
+max_depth	        [7]	         控制模型複雜度，過深可能過擬合    
+learning_rate	    [0.3]	       探索不同收斂速度，避免 overshoot     
+scale_pos_weight	[6]          對應類別不平衡程度，用以提高詐騙樣本的重要性權重    
 
 ### 閾值調整
 預設分類閾值為 0.5，對於偏態資料極度不適用，會導致 recall 過低。
