@@ -16,11 +16,17 @@
 建立 RandomForestClassifier 模型訓練與測試
 
 ✅ 評估結果（實際執行）：
+
 Random Forest Evaluation:
+
 Accuracy:         0.9995318516437859
+
 Precision Score:  0.9576271186440678
+
 Recall Score:     0.7635135135135135
+
 F1 Score:         0.849624060150376
+
 Classification Report:
 
     Class 0 - Precision: 1.00, Recall: 1.00
