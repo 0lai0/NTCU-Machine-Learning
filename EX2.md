@@ -58,7 +58,12 @@
     random_state=42
   )
   ```
-- 測試過程：
-  - 先對兩者數值較大的部分進行改動(n_estimators) 在對數值較小的部分慢慢進行微調
-  
+- 說明：
+    我是用範例的兩個方式進行參數的調整，改變樹的數量與learning rate的值與樹的深度(depth)
+- 範例結果
+  -   ![image](https://github.com/user-attachments/assets/61c60032-9224-419c-804c-cdd8fd337e5a)
+- 我的結果
+  - ![image](https://github.com/user-attachments/assets/2d711785-52e6-4b37-84c5-088675b82db1)
+ 
+    
    
