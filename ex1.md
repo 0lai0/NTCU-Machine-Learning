@@ -16,7 +16,7 @@
 - 建立 `RandomForestClassifier` 模型訓練與測試
 
 #### 評估結果（實際執行）：
->Random Forest Evaluation:
+Random Forest Evaluation:
 
 >Accuracy: 0.9995318516437859
 
