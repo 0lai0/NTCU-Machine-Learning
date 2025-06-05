@@ -17,9 +17,13 @@
 
 #### 評估結果（實際執行）：
 Random Forest Evaluation:
+
 Accuracy: 0.9995318516437859
+
 Precision Score: 0.9576271186440678
+
 Recall Score: 0.7635135135135135
+
 F1 Score: 0.849624060150376
 
 **Classification Report:**
@@ -48,9 +52,13 @@ F1 Score: 0.849624060150376
 
 #### 評估結果（實際執行）：
 KMeans (Unsupervised) Evaluation:
+
 Accuracy: 0.9982678510820079
+
 Precision Score: 0.0000000000000000
+
 Recall Score: 0.0000000000000000
+
 F1 Score: 0.0000000000000000
 
 **Classification Report:**
