@@ -1,87 +1,115 @@
-# NTCU Machine Learning Assignment Repository
-**NTCU-Machine-Learning** repository for the Machine Learning course at NTCU. 
-This repository is used for submitting assignments related to machine learning projects, with a focus on **Credit Card Fraud Detection**.
+學長：
+監督式學習：
+Random Forest Evaluation:
+===============================
+Accuracy: 0.9996371850239341
+Precision Score: 0.9411764705882353
+Recall Score: 0.8235294117647058
+F1 Score: 0.8784313725490196
 
-## Project Overview
-This assignment focuses on building a machine learning model for **credit card fraud detection**. 
-You will use a dataset to train and evaluate models, applying techniques such as data preprocessing, feature scaling, and classification algorithms (e.g., Random Forest) or clustering (e.g., KMeans).
+Classification Report:
+              precision    recall  f1-score   support
 
-**Objectives:**
-- Load and preprocess the dataset.
-- Train a machine learning model to detect fraudulent transactions.
-- Evaluate the model using metrics like accuracy, precision, recall, F1-score, ROC AUC, and confusion matrix.
+           0       1.00      1.00      1.00     85307
+           1       0.94      0.82      0.88       136
 
-## Setup Instructions
-To set up your environment and work on the assignment, follow these steps:
+    accuracy                           1.00     85443
+   macro avg       0.97      0.91      0.94     85443
+weighted avg       1.00      1.00      1.00     85443
 
-### 1. Fork the Repository
-- Fork the `NTCU-Machine-Learning` repository to your GitHub account.
-- Clone your forked repository to your local machine:
-  ```bash
-  git clone <your-forked-repo-url>
-  ```
+非監督式學習：
+KMeans (Unsupervised) Evaluation:
+=============================================
+         Accuracy: 0.9987242957293166
+  Precision Score: 0.782608695652174
+     Recall Score: 0.36486486486486486
+         F1 Score: 0.4976958525345622
 
-### 2. Install Git
-Ensure Git is installed on your system:
-- **Windows/Mac**: Download and install Git from [git-scm.com](https://git-scm.com).
-- **Ubuntu/Linux**:
-  ```bash
-  sudo apt update
-  sudo apt install git
-  ```
+Classification Report:
+              precision    recall  f1-score   support
 
-## Submission Guidelines
-1. **Fork and Clone**: Fork this repository and clone it to your local machine.
-2. **Create a Branch**: Create a branch for your assignment (e.g., `assignment-<your-student-id>`).
-3. **Implement Your Code**: Modify the provided code template (see [Code Structure](#code-structure)) to complete the assignment.
-4. **Commit and Push**:
-   ```bash
-   git add .
-   git commit -m "Submit assignment for <your-student-id>"
-   git push origin <your-branch-name>
-   ```
-5. **Create a Pull Request**: Submit a pull request from your forked repository to the main repository for review.
-6. **File Naming**: Name your main script as `<ex_number>.py`.
-7. **Create a New Folder**: Remeber put your each file into `<your-student-id>_<ex_number>`.
+           0       1.00      1.00      1.00     85295
+           1       0.78      0.36      0.50       148
 
-**Important**:
-- Do not modify the `TEST_SIZE` (set to `0.3`) or `RANDOM_SEED` (set to `42`) in the code.
-- Ensure your code is well-documented with comments explaining your approach.
-- Submit your pull request before the deadline.
+    accuracy                           1.00     85443
+   macro avg       0.89      0.68      0.75     85443
+weighted avg       1.00      1.00      1.00     85443
 
-## Dataset
-The dataset for this assignment is available via **KaggleHub**. Use the following code to load it:
-```python
-import kagglehub
-path = kagglehub.dataset_download("mlg-ulb/creditcardfraud")
-data = pd.read_csv(f"{path}/creditcard.csv")
-```
+ACS111144：
+ex1_1：(第一版：本監督式學習precision勝；非監督式學習recall勝、f1-score勝）
+--- Supervised: LightGBM with Optuna 評估報告 ---
+======================================================
+        準確率 (Accuracy): 0.9996
+        精確率 (Precision): 0.9435
+        召回率 (Recall): 0.7905
+        F1 分數 (F1 Score): 0.8603
 
-- The dataset contains credit card transaction data with features like transaction amount, time, and anonymized features (`V1` to `V28`).
-- The target variable is `Class` (0 for non-fraudulent, 1 for fraudulent).
+分類報告 (Classification Report):
+              precision    recall  f1-score   support
 
-### Tasks
-1. Preprocess the data (e.g., handle missing values, scale features using `StandardScaler`).
-2. Split the dataset into training (70%) and testing (30%) sets.
-3. Train a classification model (e.g., `RandomForestClassifier`) or a clustering model (e.g., `KMeans`).
-4. Evaluate the model using the following metrics:
-   - Accuracy
-   - Precision
-   - Recall
-   - F1-score
-   - ROC AUC score
-   - Confusion Matrix
-   - (For clustering) Silhouette Score
+           0       1.00      1.00      1.00     85295
+           1       0.94      0.79      0.86       148
 
-## Evaluation Metrics
-Your model will be evaluated based on:
-- **Correctness**: Does the code run without errors and produce the expected outputs?
-- **Performance**: How well does your model perform on the test set (based on the metrics above)?
-- **Code Quality**: Is the code well-organized, commented, and easy to understand?
-- **Documentation**: Include a brief explanation of your approach in the pull request description.
+    accuracy                           1.00     85443
+   macro avg       0.97      0.90      0.93     85443
+weighted avg       1.00      1.00      1.00     85443
 
-## Contact
-For questions or issues, contact the teaching assistant via:
-- Email: [bcs113116@gm.ntcu.edu.tw]
-- Email: [bcs113115@gm.ntcu.edu.tw]
----
+======================================================
+
+--- 自動編碼器 (非監督式) 評估報告 ---
+======================================================
+        準確率 (Accuracy): 0.9986
+        精確率 (Precision): 0.5535
+        召回率 (Recall): 0.6471
+        F1 分數 (F1 Score): 0.5966
+
+分類報告 (Classification Report):
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85307
+           1       0.55      0.65      0.60       136
+
+    accuracy                           1.00     85443
+   macro avg       0.78      0.82      0.80     85443
+weighted avg       1.00      1.00      1.00     85443
+
+======================================================
+
+ex1_2：(第二版：本監督式學習recall勝；非監督式學習recall勝、f1-score勝）
+--- XGBoost 分類器 評估結果 ---
+======================================================
+準確率 (Accuracy)           : 0.9993
+精準度 (Precision, 詐騙類)     : 0.7785
+召回率 (Recall, 詐騙類)        : 0.8311
+F1 分數 (F1 Score, 詐騙類)    : 0.8039
+ROC AUC                  : 0.9730
+PR AUC (Average Precision): 0.8338
+
+分類報告 (Classification Report):
+                precision    recall  f1-score   support
+
+正常 (Class 0)       1.00      1.00      1.00     85295
+詐騙 (Class 1)       0.78      0.83      0.80       148
+
+      accuracy                           1.00     85443
+     macro avg       0.89      0.92      0.90     85443
+  weighted avg       1.00      1.00      1.00     85443
+
+======================================================
+
+--- Autoencoder (非監督式) 評估結果 ---
+=============================================
+準確率 (Accuracy)           : 0.9985
+精準度 (Precision, 詐騙類)     : 0.5208
+召回率 (Recall, 詐騙類)        : 0.5515
+F1 分數 (F1 Score, 詐騙類)    : 0.5357
+
+分類報告 (Classification Report):
+                precision    recall  f1-score   support
+
+正常 (Class 0)       1.00      1.00      1.00     85307
+詐騙 (Class 1)       0.52      0.55      0.54       136
+
+      accuracy                           1.00     85443
+     macro avg       0.76      0.78      0.77     85443
+  weighted avg       1.00      1.00      1.00     85443

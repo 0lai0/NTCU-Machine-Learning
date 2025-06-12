@@ -1,87 +1,42 @@
-# NTCU Machine Learning Assignment Repository
-**NTCU-Machine-Learning** repository for the Machine Learning course at NTCU. 
-This repository is used for submitting assignments related to machine learning projects, with a focus on **Credit Card Fraud Detection**.
+學長：
+Hybrid Model Evaluation:
+===============================
+Accuracy: 0.9996722961506501
+Precision Score: 0.9285714285714286
+Recall Score: 0.8602941176470589
+F1 Score: 0.8931297709923665
 
-## Project Overview
-This assignment focuses on building a machine learning model for **credit card fraud detection**. 
-You will use a dataset to train and evaluate models, applying techniques such as data preprocessing, feature scaling, and classification algorithms (e.g., Random Forest) or clustering (e.g., KMeans).
+Classification Report:
+              precision    recall  f1-score   support
 
-**Objectives:**
-- Load and preprocess the dataset.
-- Train a machine learning model to detect fraudulent transactions.
-- Evaluate the model using metrics like accuracy, precision, recall, F1-score, ROC AUC, and confusion matrix.
+           0       1.00      1.00      1.00     85307
+           1       0.93      0.86      0.89       136
 
-## Setup Instructions
-To set up your environment and work on the assignment, follow these steps:
+    accuracy                           1.00     85443
+   macro avg       0.96      0.93      0.95     85443
+weighted avg       1.00      1.00      1.00     85443
 
-### 1. Fork the Repository
-- Fork the `NTCU-Machine-Learning` repository to your GitHub account.
-- Clone your forked repository to your local machine:
-  ```bash
-  git clone <your-forked-repo-url>
-  ```
 
-### 2. Install Git
-Ensure Git is installed on your system:
-- **Windows/Mac**: Download and install Git from [git-scm.com](https://git-scm.com).
-- **Ubuntu/Linux**:
-  ```bash
-  sudo apt update
-  sudo apt install git
-  ```
+ACS111144：
+ex2：(precision勝）
+最終決戰模型 (The Final Battle Model) 評估報告:
+==================================================
+盜刷精確率 (Class 1): 0.9569
+盜刷召回率 (Class 1): 0.7500
+盜刷 F1-Score (Class 1): 0.8409
 
-## Submission Guidelines
-1. **Fork and Clone**: Fork this repository and clone it to your local machine.
-2. **Create a Branch**: Create a branch for your assignment (e.g., `assignment-<your-student-id>`).
-3. **Implement Your Code**: Modify the provided code template (see [Code Structure](#code-structure)) to complete the assignment.
-4. **Commit and Push**:
-   ```bash
-   git add .
-   git commit -m "Submit assignment for <your-student-id>"
-   git push origin <your-branch-name>
-   ```
-5. **Create a Pull Request**: Submit a pull request from your forked repository to the main repository for review.
-6. **File Naming**: Name your main script as `<ex_number>.py`.
-7. **Create a New Folder**: Remeber put your each file into `<your-student-id>_<ex_number>`.
+完整分類報告:
+              precision    recall  f1-score   support
 
-**Important**:
-- Do not modify the `TEST_SIZE` (set to `0.3`) or `RANDOM_SEED` (set to `42`) in the code.
-- Ensure your code is well-documented with comments explaining your approach.
-- Submit your pull request before the deadline.
+   非盜刷 (0)      1.00      1.00      1.00     85295
+     盜刷 (1)      0.96      0.75      0.84       148
 
-## Dataset
-The dataset for this assignment is available via **KaggleHub**. Use the following code to load it:
-```python
-import kagglehub
-path = kagglehub.dataset_download("mlg-ulb/creditcardfraud")
-data = pd.read_csv(f"{path}/creditcard.csv")
-```
+    accuracy                           1.00     85443
+   macro avg       0.98      0.87      0.92     85443
+weighted avg       1.00      1.00      1.00     85443
 
-- The dataset contains credit card transaction data with features like transaction amount, time, and anonymized features (`V1` to `V28`).
-- The target variable is `Class` (0 for non-fraudulent, 1 for fraudulent).
 
-### Tasks
-1. Preprocess the data (e.g., handle missing values, scale features using `StandardScaler`).
-2. Split the dataset into training (70%) and testing (30%) sets.
-3. Train a classification model (e.g., `RandomForestClassifier`) or a clustering model (e.g., `KMeans`).
-4. Evaluate the model using the following metrics:
-   - Accuracy
-   - Precision
-   - Recall
-   - F1-score
-   - ROC AUC score
-   - Confusion Matrix
-   - (For clustering) Silhouette Score
+--- 最終目標檢查 ---
+目標盗刷精確率: > 0.9286 (達成: 0.9569)
+目標盜刷召回率: > 0.8603 (達成: 0.7500)
 
-## Evaluation Metrics
-Your model will be evaluated based on:
-- **Correctness**: Does the code run without errors and produce the expected outputs?
-- **Performance**: How well does your model perform on the test set (based on the metrics above)?
-- **Code Quality**: Is the code well-organized, commented, and easy to understand?
-- **Documentation**: Include a brief explanation of your approach in the pull request description.
-
-## Contact
-For questions or issues, contact the teaching assistant via:
-- Email: [bcs113116@gm.ntcu.edu.tw]
-- Email: [bcs113115@gm.ntcu.edu.tw]
----
